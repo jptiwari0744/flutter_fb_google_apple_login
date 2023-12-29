@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final user = await login();
     print('user$user');
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('log in with google account successful')));
+        const SnackBar(content: Text('log in with google account successful')));
   }
 
   _ifUserIsLoggedIn() async {
@@ -93,14 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
       _accessToken = loginResult.accessToken;
       final userInfo = await FacebookAuth.instance.getUserData();
       _userData = userInfo;
+      print(_userData);
     } else {
       print('ResultStatus: ${loginResult.status}');
       print('Message: ${loginResult.message}');
     }
   }
 
-  _logOut() async {
-    await FacebookAuth.instance.logOut();
+  _logOut() {
+    FacebookAuth.instance.logOut();
     _accessToken = null;
     _userData = null;
   }
@@ -129,7 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
           _userData != null
               ? Text(
                   '${_userData!['name']}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 28),
                 )
               : Container(),
           // _userData != null
@@ -144,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(
             onPressed: () {
               _ifUserIsLoggedIn();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('log in with facebook account successful')));
             },
             child: const Text('Log in with fb'),
@@ -152,25 +154,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(
             onPressed: () {
               _logOut();
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('log out with facebook account')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('log out with facebook account')));
 
-              Navigator.pop(context);
+              // Navigator.pop(context);
             },
             child: const Text('Log Out'),
           ),
           ElevatedButton.icon(
               onPressed: signIn,
-              icon: Icon(Icons.g_mobiledata),
-              label: Text('login with gmail')),
+              icon: const Icon(Icons.g_mobiledata),
+              label: const Text('login with gmail')),
           Center(
             child: ElevatedButton(
                 onPressed: () {
                   googleSign.disconnect();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('log out with google account')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('log out with google account')));
                 },
-                child: Text('log out')),
+                child: const Text('log out')),
           ),
         ],
       ),
