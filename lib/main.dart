@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -58,12 +60,22 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic>? _userData;
   AccessToken? _accessToken;
   bool? _checking = true;
-  final googleSign = GoogleSignIn();
+  var user;
+  GoogleSignIn googleSign = GoogleSignIn(scopes: ['email']);
   Future login() => googleSign.signIn();
 
-  Future signIn() async {
-    
-    final user = await login();
+  Future sign() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      googleSign = GoogleSignIn(
+        clientId:
+            "437094400885-ib3t0rv9aj3si67f4o4999rek59v8she.apps.googleusercontent.com",
+        scopes: [
+          'email',
+        ],
+      );
+    }
+    user = await login();
+    setState(() {});
     print('user$user');
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('log in with google account successful')));
@@ -94,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _accessToken = loginResult.accessToken;
       final userInfo = await FacebookAuth.instance.getUserData();
       _userData = userInfo;
+      setState(() {});
       print(_userData);
     } else {
       print('ResultStatus: ${loginResult.status}');
@@ -155,6 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(
             onPressed: () {
               _logOut();
+              _userData = null;
+              setState(() {});
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('log out with facebook account')));
 
@@ -162,14 +177,17 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: const Text('Log Out'),
           ),
+          user != null ? Text(user['email']) : Text(''),
           ElevatedButton.icon(
-              onPressed: signIn,
+              onPressed: sign,
               icon: const Icon(Icons.g_mobiledata),
               label: const Text('login with gmail')),
           Center(
             child: ElevatedButton(
                 onPressed: () {
                   googleSign.disconnect();
+                  user = null;
+                  setState(() {});
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('log out with google account')));
                 },
